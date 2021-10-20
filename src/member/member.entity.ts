@@ -24,4 +24,21 @@ export class Member extends BaseEntity {
 
   @Column()
   password: string;
+
+  //== Member 객체 생성 메서드 ==//
+  public static createMember(
+    email: string,
+    age: number,
+    sex: MemberSex,
+    password: string,
+  ) {
+    const member: Member = new Member();
+
+    member.email = email;
+    member.age = age;
+    member.sex = sex;
+    member.password = password;
+
+    return member;
+  }
 }

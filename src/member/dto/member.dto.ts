@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { MemberSex } from '../member.sex-enum';
 
-export class MemberDto {
+export class SignyUpMemberDto {
   @IsNotEmpty()
   @IsEmail()
   email: string;

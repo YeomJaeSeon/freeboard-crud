@@ -5,7 +5,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { MemberDto } from './dto/member.dto';
+import { SignyUpMemberDto } from './dto/member.dto';
 import { MemberService } from './member.service';
 
 @Controller('member')
@@ -16,7 +16,7 @@ export class MemberController {
   //== signup ==//
   @Post('signup')
   @UsePipes(new ValidationPipe())
-  signUp(@Body() memberDto: MemberDto): Promise<string> {
+  signUp(@Body() memberDto: SignyUpMemberDto): Promise<string> {
     return this.memberService.signUp(memberDto);
   }
 }
