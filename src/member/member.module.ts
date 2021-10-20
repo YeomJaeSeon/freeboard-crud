@@ -3,6 +3,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { JwtStrategy } from './jwt.strategy';
 import { MemberController } from './member.controller';
 import { Member } from './member.entity';
 import { MemberService } from './member.service';
@@ -19,6 +20,7 @@ import { MemberService } from './member.service';
     TypeOrmModule.forFeature([Member]) // member Repository imports in typeorm
   ], 
   controllers: [MemberController],
-  providers: [MemberService],
+  providers: [MemberService, JwtStrategy],
+  exports: [JwtStrategy, PassportModule] //다른 모듈에서도 사용할거임 ex) board module(게시판 모듈)
 })
 export class MemberModule {}
