@@ -57,10 +57,15 @@ export class MemberService {
   }
 
   //== 로그인 == //
-  // async signIn(memberDto : LoginMemberDto): Promise<{accessToken : string}>{
-  //   const {email, password} = memberDto;
-  //   const loginMember = this.memberRepository.findOne({ email }); //이메일로 select
+  async signIn(memberDto : LoginMemberDto): Promise<{accessToken : string}>{
+    const {email, password} = memberDto;
+    const loginMember = this.memberRepository.findOne({ email }); //이메일로 select
 
-  // }
+    if(loginMember && (await bcrypt.compare(password, (await loginMember).password))){
+      //로그인한 멤버가있고, bcryptjs 모듈을 통해 요청온 pwd와 select된 멤버의 비밀번호가 같으면
+
+      const payload = {email}
+    }
+  }
 
 }
