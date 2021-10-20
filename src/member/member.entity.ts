@@ -1,7 +1,9 @@
+import { Board } from 'src/board/board.entity';
 import {
   BaseEntity,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
@@ -24,6 +26,10 @@ export class Member extends BaseEntity {
 
   @Column()
   password: string;
+
+  //연관관계 매핑 (Member : Board = 일대 다)
+  @OneToMany(type => Board, board => board.member, {eager: true})
+  boards: Board[];
 
   //== Member 객체 생성 메서드 ==//
   public static createMember(
