@@ -13,6 +13,13 @@ export class BoardService {
         private boardRepository: Repository<Board>
     ){}
 
+    // == getAllBoards == //
+    async getAllBoards(): Promise<Board[]>{
+        const result = await this.boardRepository.find();
+
+        return result;
+    }
+
     //== Create == //
     async createBoard(
         boardDto: BoardDto,
@@ -29,6 +36,7 @@ export class BoardService {
 
         await this.boardRepository.save(createdBoard);
 
+        //생성된 게시판 리턴
         return createdBoard;
     }
 }

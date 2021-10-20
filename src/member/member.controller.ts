@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller, Post, UsePipes,
+  Controller, Logger, Post, UsePipes,
   ValidationPipe
 } from '@nestjs/common';
 import { LoginMemberDto } from './dto/login_member.dto';
@@ -9,6 +9,8 @@ import { MemberService } from './member.service';
 
 @Controller('member')
 export class MemberController {
+  private logger = new Logger('MemberController')
+
   //constructor DI
   constructor(private memberService: MemberService) {}
 
