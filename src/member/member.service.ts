@@ -8,8 +8,9 @@ import {
   ALREADY_EXISTED_NAME_MSG,
   SERVER_ERROR_MSG,
   SIGNUP_SUCCESS_MSG,
-} from 'src/message/message';
+} from '../message/message';
 import { MemberDto } from './dto/member.dto';
+import { Member } from './member.entity';
 import { MemberRepository } from './member.repository';
 
 @Injectable()
@@ -20,13 +21,19 @@ export class MemberService {
     private memberRepository: MemberRepository,
   ) {}
 
+  async findAllMembers(): Promise<Member[]> {
+    const members = await this.memberRepository.find();
+
+    return members;
+  }
+
   //회원가입
   async signUp(memberDto: MemberDto): Promise<string> {
-    const { name, age, sex, password } = memberDto;
+    const { email, age, sex, password } = memberDto;
 
     // 생성
     const newUser = this.memberRepository.create({
-      name,
+      email,
       age,
       sex,
       password,

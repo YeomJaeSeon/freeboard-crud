@@ -1,4 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { MemberDto } from './dto/member.dto';
 import { MemberService } from './member.service';
 
@@ -9,6 +15,7 @@ export class MemberController {
 
   //== signup ==//
   @Post('signup')
+  @UsePipes(new ValidationPipe())
   signUp(@Body() memberDto: MemberDto): Promise<string> {
     return this.memberService.signUp(memberDto);
   }

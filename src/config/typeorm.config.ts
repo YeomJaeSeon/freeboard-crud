@@ -2,7 +2,7 @@ import { SqliteConnectionOptions } from 'typeorm/driver/sqlite/SqliteConnectionO
 
 export const typeOrmConfig: SqliteConnectionOptions = {
   type: 'sqlite',
-  database: 'freeboard',
+  database: 'freeboardDB',
   entities: [__dirname + '/../**/*.entity.{js, ts}'],
   synchronize: true,
 };

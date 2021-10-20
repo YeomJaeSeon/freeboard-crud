@@ -8,13 +8,13 @@ import {
 import { MemberSex } from './member.sex-enum';
 
 @Entity()
-@Unique(['name']) // name filed unique constraint
+@Unique(['email']) // email field unique constraint
 export class Member extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  name: string; //name중복 허용 X
+  email: string; //email중복 허용 X
 
   @Column()
   age: number;
