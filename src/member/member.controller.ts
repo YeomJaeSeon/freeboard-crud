@@ -19,4 +19,6 @@ export class MemberController {
   signUp(@Body() memberDto: SignyUpMemberDto): Promise<string> {
     return this.memberService.signUp(memberDto);
   }
+
+  
 }
