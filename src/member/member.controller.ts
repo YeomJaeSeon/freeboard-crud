@@ -5,7 +5,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { SignyUpMemberDto } from './dto/member.dto';
+import { SignyUpMemberDto } from './dto/signup_member.dto';
 import { MemberService } from './member.service';
 
 @Controller('member')

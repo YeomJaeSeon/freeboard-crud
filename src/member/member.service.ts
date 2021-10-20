@@ -1,16 +1,16 @@
 import {
   ConflictException,
   Injectable,
-  InternalServerErrorException,
+  InternalServerErrorException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   ALREADY_EXISTED_NAME_MSG,
   SERVER_ERROR_MSG,
-  SIGNUP_SUCCESS_MSG,
+  SIGNUP_SUCCESS_MSG
 } from '../message/message';
-import { SignyUpMemberDto } from './dto/member.dto';
+import { SignyUpMemberDto } from './dto/signup_member.dto';
 import { Member } from './member.entity';
 
 @Injectable()

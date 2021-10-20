@@ -6,7 +6,7 @@ import {
   SIGNUP_SUCCESS_MSG,
   ALREADY_EXISTED_NAME_MSG,
 } from '../message/message';
-import { SignyUpMemberDto } from './dto/member.dto';
+import { SignyUpMemberDto } from './dto/signup_member.dto';
 import { Member } from './member.entity';
 import { MemberService } from './member.service';
 import { MemberSex } from './member.sex-enum';
