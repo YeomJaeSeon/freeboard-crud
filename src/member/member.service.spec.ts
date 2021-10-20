@@ -1,17 +1,17 @@
 import { ConflictException } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { QueryFailedError } from 'typeorm';
 import {
-  SIGNUP_SUCCESS_MSG,
-  ALREADY_EXISTED_NAME_MSG,
+  ALREADY_EXISTED_NAME_MSG, SIGNUP_SUCCESS_MSG
 } from '../message/message';
 import { SignyUpMemberDto } from './dto/signup_member.dto';
 import { Member } from './member.entity';
 import { MemberService } from './member.service';
 import { MemberSex } from './member.sex-enum';
 
-//MockMemberRepository
+// == MockMemberRepository start == //
 class MockMemberRepository {
   private id: number = 1;
   private members: Member[] = [];
@@ -48,13 +48,22 @@ class MockMemberRepository {
     member.id = this.id++;
     this.members.push(member);
   }
-}
+} // == MockMemberRepository end ==//
 
 describe('MemberService', () => {
   let service: MemberService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      //testing module에도 똑같이 JwtModule을 넣어줘야 test에서 사용가능
+      imports: [
+        JwtModule.register({
+          secret: 'mySecret', 
+          signOptions : {
+          expiresIn: 3600 
+        }
+      }),
+      ],
       providers: [
         MemberService,
         {
@@ -81,12 +90,9 @@ describe('MemberService', () => {
   describe('signup test', () => {
     it('회원가입', async () => {
       //given
-      const memberDto: SignyUpMemberDto = {
-        email: 'a@naver.com',
-        age: 20,
-        sex: MemberSex.FEMALE,
-        password: '1234',
-      };
+      const memberDto: SignyUpMemberDto = new SignyUpMemberDto(
+        'a@naver.com', 20 ,MemberSex.FEMALE, '1234'
+      );
 
       //when
       const successMsg = await service.signUp(memberDto);
@@ -99,26 +105,17 @@ describe('MemberService', () => {
 
     it('회원가입 3명', async () => {
       //given
-      const memberDto1: SignyUpMemberDto = {
-        email: 'a@naver.com',
-        age: 20,
-        sex: MemberSex.FEMALE,
-        password: '1234',
-      };
+      const memberDto1: SignyUpMemberDto = new SignyUpMemberDto(
+        'a@naver.com', 20 ,MemberSex.FEMALE, '1234'
+      );
 
-      const memberDto2: SignyUpMemberDto = {
-        email: 'b@naver.com',
-        age: 20,
-        sex: MemberSex.FEMALE,
-        password: '1234',
-      };
+      const memberDto2: SignyUpMemberDto = new SignyUpMemberDto(
+        'b@naver.com', 20 ,MemberSex.FEMALE, '1234'
+      );
 
-      const memberDto3: SignyUpMemberDto = {
-        email: 'c@naver.com',
-        age: 20,
-        sex: MemberSex.FEMALE,
-        password: '1234',
-      };
+      const memberDto3: SignyUpMemberDto = new SignyUpMemberDto(
+        'c@naver.com', 20 ,MemberSex.FEMALE, '1234'
+      );
 
       //when
       await service.signUp(memberDto1);
@@ -132,22 +129,16 @@ describe('MemberService', () => {
     });
     it('회원가입 실패_중복 email', async () => {
       //given
-      const memberDto: SignyUpMemberDto = {
-        email: 'a@naver.com', //중복이메일
-        age: 20,
-        sex: MemberSex.FEMALE,
-        password: '1234',
-      };
+      const memberDto: SignyUpMemberDto = new SignyUpMemberDto(
+        'a@naver.com', 20 ,MemberSex.FEMALE, '1234'
+      );
 
       await service.signUp(memberDto);
 
       //when
-      const duplicateMemberDto: SignyUpMemberDto = {
-        email: 'a@naver.com',
-        age: 20,
-        sex: MemberSex.FEMALE,
-        password: '1234',
-      };
+      const duplicateMemberDto: SignyUpMemberDto = new SignyUpMemberDto(
+        'a@naver.com', 20 ,MemberSex.FEMALE, '1234'
+      );
 
       //then
       try {

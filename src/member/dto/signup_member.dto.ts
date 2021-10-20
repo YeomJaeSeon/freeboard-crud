@@ -8,7 +8,13 @@ import {
 import { MemberSex } from '../member.sex-enum';
 
 export class SignyUpMemberDto {
-  //TODO: private, getter setter
+  constructor(email: string, age: number, sex: MemberSex, password: string){
+    this._email = email;
+    this._age = age;
+    this._sex = sex;
+    this._password = password;
+  }
+
   @IsNotEmpty()
   @IsEmail()
   private _email: string;
