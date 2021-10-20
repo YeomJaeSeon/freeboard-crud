@@ -1,7 +1,7 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from 'src/member/member.entity';
-import { NOT_FOUND_BOARD_MSG } from '../message/message';
+import { BOARD_DELETE_SUCCESS_MSG, NOT_FOUND_BOARD_MSG, UNAUTHORIZE_ACCESS_DELETE_MSG } from '../message/message';
 import { Repository } from 'typeorm';
 import { Board } from './board.entity';
 import { BoardDto } from './dto/board.dto';
@@ -52,5 +52,23 @@ export class BoardService {
 
         //생성된 게시판 리턴
         return createdBoard;
+    }
+
+    //== delete == //
+    async deleteBoard(
+        id: number,
+        member: Member
+    ) : Promise<string>{
+        //조회하고
+        const foundBoard = await this.getBoardById(id);
+
+        if(foundBoard.member.id !== member.id){
+            //다른 회원이 삭제하려 접근하면 예외발생
+            throw new UnauthorizedException(UNAUTHORIZE_ACCESS_DELETE_MSG)
+        }
+
+        await this.boardRepository.delete(id);
+
+        return BOARD_DELETE_SUCCESS_MSG;
     }
 }

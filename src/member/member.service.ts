@@ -10,7 +10,7 @@ import {
   ALREADY_EXISTED_NAME_MSG,
   SERVER_ERROR_MSG,
   SIGNUP_SUCCESS_MSG,
-  UNAUTHORIZE_ACCESS_MSG
+  UNAUTHORIZE_ACCESS_LOGIN_MSG,
 } from '../message/message';
 import { LoginMemberDto } from './dto/login_member.dto';
 import { SignyUpMemberDto } from './dto/signup_member.dto';
@@ -72,7 +72,7 @@ export class MemberService {
       const token = this.jwtService.sign(payload); //member module에서 설정한 secret이 알아서 합쳐져서 토큰이 생성된다.
 
       return { token };
-    }else throw new UnauthorizedException(UNAUTHORIZE_ACCESS_MSG)
+    }else throw new UnauthorizedException(UNAUTHORIZE_ACCESS_LOGIN_MSG)
   }
 
 }

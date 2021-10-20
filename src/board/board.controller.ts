@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Param, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Board } from './board.entity';
 import { BoardService } from './board.service';
@@ -34,5 +34,13 @@ export class BoardController {
     ) : Promise<Board>{
         this.logger.log('getBoardById')
         return this.boardService.getBoardById(id);
+    }
+
+    @Delete('/:id')
+    deleteBoard(
+        @Param('id') id: number,
+        @Req() req        
+    ): Promise<string>{
+        return this.boardService.deleteBoard(id, req.user);
     }
 }

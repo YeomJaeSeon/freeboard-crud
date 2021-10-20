@@ -53,6 +53,7 @@ describe('BoardService', () => {
 
     service = module.get<BoardService>(BoardService);
   });
+  
   //== getBoardById test ==//
   describe('getBoardById test', () => {
     it('id로 게시판 조회 - 게시판 있음', async () => {
@@ -80,7 +81,6 @@ describe('BoardService', () => {
       expect(resultBoard.title).toEqual('1 게시물입니당!')
       expect(resultBoard.content).toEqual('갑자기 날씨가 넘 추워111')
     })
-    it.todo('id로 게시판 조회 - 게시판 없음')
     it('id로 게시판 조회 - 게시판 없음', async () => {
       //given
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');

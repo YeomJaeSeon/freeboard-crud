@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { QueryFailedError } from 'typeorm';
 import {
-  ALREADY_EXISTED_NAME_MSG, SIGNUP_SUCCESS_MSG, UNAUTHORIZE_ACCESS_MSG
+  ALREADY_EXISTED_NAME_MSG, SIGNUP_SUCCESS_MSG, UNAUTHORIZE_ACCESS_LOGIN_MSG
 } from '../message/message';
 import { LoginMemberDto } from './dto/login_member.dto';
 import { SignyUpMemberDto } from './dto/signup_member.dto';
@@ -200,7 +200,7 @@ describe('MemberService', () => {
         await service.login(notProperLoginMember);
       }catch(err){
         expect(err).toBeInstanceOf(UnauthorizedException);
-        expect(err.message).toEqual(UNAUTHORIZE_ACCESS_MSG);
+        expect(err.message).toEqual(UNAUTHORIZE_ACCESS_LOGIN_MSG);
       }
     })
 
@@ -222,7 +222,7 @@ describe('MemberService', () => {
         await service.login(notProperLoginMember);
       }catch(err){
         expect(err).toBeInstanceOf(UnauthorizedException);
-        expect(err.message).toEqual(UNAUTHORIZE_ACCESS_MSG);
+        expect(err.message).toEqual(UNAUTHORIZE_ACCESS_LOGIN_MSG);
       }
     })
   })

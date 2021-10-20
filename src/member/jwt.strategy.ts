@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UNAUTHORIZE_ACCESS_MSG } from "../message/message";
+import { UNAUTHORIZE_ACCESS_LOGIN_MSG } from "../message/message";
 import { Repository } from "typeorm";
 import { Member } from "./member.entity";
 
@@ -25,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy){ //jwt를 기본전�
     
         if (!member) {
             //jwt의 만료일자
-          throw new UnauthorizedException(UNAUTHORIZE_ACCESS_MSG);
+          throw new UnauthorizedException(UNAUTHORIZE_ACCESS_LOGIN_MSG);
         }
     
         //유효하면 member객체 넣어서 요청
