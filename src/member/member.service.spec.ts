@@ -1,11 +1,12 @@
-import { ConflictException } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { QueryFailedError } from 'typeorm';
 import {
-  ALREADY_EXISTED_NAME_MSG, SIGNUP_SUCCESS_MSG
+  ALREADY_EXISTED_NAME_MSG, SIGNUP_SUCCESS_MSG, UNAUTHORIZE_ACCESS_MSG
 } from '../message/message';
+import { LoginMemberDto } from './dto/login_member.dto';
 import { SignyUpMemberDto } from './dto/signup_member.dto';
 import { Member } from './member.entity';
 import { MemberService } from './member.service';
@@ -19,6 +20,11 @@ class MockMemberRepository {
   //repository find()메서드
   async find() {
     return this.members;
+  }
+
+  //repository findOne()메서드
+  async findOne({email}: {email : string}): Promise<Member>{
+    return this.members.find(each => each.email === email);
   }
 
   //repository create()메서드
@@ -52,6 +58,7 @@ class MockMemberRepository {
 
 describe('MemberService', () => {
   let service: MemberService;
+  let jwtService :JwtService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -74,6 +81,7 @@ describe('MemberService', () => {
     }).compile();
 
     service = module.get<MemberService>(MemberService);
+    jwtService = module.get<JwtService>(JwtService);
   });
 
   //== findAllMembers test ==//
@@ -87,6 +95,7 @@ describe('MemberService', () => {
     });
   });
 
+  // == signup test == //
   describe('signup test', () => {
     it('회원가입', async () => {
       //given
@@ -135,6 +144,8 @@ describe('MemberService', () => {
 
       await service.signUp(memberDto);
 
+      const result = await service.findAllMembers();
+
       //when
       const duplicateMemberDto: SignyUpMemberDto = new SignyUpMemberDto(
         'a@naver.com', 20 ,MemberSex.FEMALE, '1234'
@@ -150,4 +161,69 @@ describe('MemberService', () => {
     });
     
   });
+
+  // == login test == //
+  describe('login test', () => {
+    it('로그인 성공', async () => {
+      //given
+      const signupMember : SignyUpMemberDto = new SignyUpMemberDto(
+        'a@naver.com', 20 ,MemberSex.FEMALE, '1234'
+      );
+
+      await service.signUp(signupMember); 
+
+      const loginMember : LoginMemberDto = new LoginMemberDto(
+        'a@naver.com', '1234'
+      );
+
+      //when
+      const token = await service.login(loginMember);
+
+      //then
+      expect(jwtService.decode(token.token)['email']).toEqual('a@naver.com');
+    })
+    it('로그인 실패 - 이메일 다름', async () => {
+      //given
+      const signupMember : SignyUpMemberDto = new SignyUpMemberDto(
+        'a@naver.com', 20 ,MemberSex.FEMALE, '1234'
+      );
+
+      await service.signUp(signupMember);
+
+      //when
+      const notProperLoginMember : LoginMemberDto = new LoginMemberDto(
+        'b@naver.com', '1234'
+      );
+      
+      //then
+      try{
+        await service.login(notProperLoginMember);
+      }catch(err){
+        expect(err).toBeInstanceOf(UnauthorizedException);
+        expect(err.message).toEqual(UNAUTHORIZE_ACCESS_MSG);
+      }
+    })
+
+    it('로그인 실패 - 비밀번호 다름', async () => {
+      //given
+      const signupMember : SignyUpMemberDto = new SignyUpMemberDto(
+        'a@naver.com', 20 ,MemberSex.FEMALE, '1234'
+      );
+
+      await service.signUp(signupMember);
+
+      //when
+      const notProperLoginMember : LoginMemberDto = new LoginMemberDto(
+        'b@naver.com', '4321' //비번 다름
+      );
+
+      //then
+      try{
+        await service.login(notProperLoginMember);
+      }catch(err){
+        expect(err).toBeInstanceOf(UnauthorizedException);
+        expect(err.message).toEqual(UNAUTHORIZE_ACCESS_MSG);
+      }
+    })
+  })
 });

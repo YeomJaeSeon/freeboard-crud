@@ -1,7 +1,12 @@
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 
 export class LoginMemberDto{
-    //TODO: private getter setter
+
+    constructor(email: string, password: string){
+        this._email = email;
+        this._password = password;
+      }
+
     @IsNotEmpty()
     @IsEmail()
     private _email: string;
