@@ -13,7 +13,7 @@ export class Board extends BaseEntity{
     content: string;
 
     //연관관계 매핑 (Board : Member = 다대 일)
-    @ManyToOne(type => Member, (member) => member.boards, {eager: true})
+    @ManyToOne(type => Member, (member) => member.boards, {eager : true})
     member: Member;
 
     //==Board 생성 메서드 ==//

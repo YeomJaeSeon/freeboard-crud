@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Board } from './board.entity';
 import { BoardService } from './board.service';
@@ -26,5 +26,13 @@ export class BoardController {
         @Req() req
         ): Promise<Board>{
         return this.boardService.createBoard(boardDto, req.user);
+    }
+
+    @Get('/:id')
+    getBoardById(
+        @Param('id') id: number
+    ) : Promise<Board>{
+        this.logger.log('getBoardById')
+        return this.boardService.getBoardById(id);
     }
 }
