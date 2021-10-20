@@ -5,6 +5,8 @@ import { Member } from '../member/member.entity';
 import { Board } from './board.entity';
 import { BoardService } from './board.service';
 import { BoardDto } from './dto/board.dto';
+import { NotFoundException } from '@nestjs/common';
+import { NOT_FOUND_BOARD_MSG } from '../message/message';
 
 // == MockBoardRepository start == //
 class MockBoardRepository{
@@ -16,6 +18,11 @@ class MockBoardRepository{
     return this.boards;
   }
 
+  //repository findOne()메서드
+  async findOne(id: number){
+    return this.boards.find(each => each.id === id);
+  }
+
   //repository create()메서드
   create({title, content, member} : {title: string, content: string, member: Member}) : Board{
     const newBoard: Board = Board.createBoard(title, content, member);
@@ -25,7 +32,7 @@ class MockBoardRepository{
 
   //repository save()메서드
   async save(board: Board){
-    board.id = ++this.id;
+    board.id = this.id++;
     this.boards.push(board);
   }
 }
@@ -46,6 +53,61 @@ describe('BoardService', () => {
 
     service = module.get<BoardService>(BoardService);
   });
+  //== getBoardById test ==//
+  describe('getBoardById test', () => {
+    it('id로 게시판 조회 - 게시판 있음', async () => {
+      //given
+      const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      const boardDto1 : BoardDto = new BoardDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
+      const boardDto2 : BoardDto = new BoardDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
+      const boardDto3 : BoardDto = new BoardDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
+      const boardDto4 : BoardDto = new BoardDto('4 게시물입니당!', '갑자기 날씨가 넘 추워444');
+      const boardDto5 : BoardDto = new BoardDto('5 게시물입니당!', '갑자기 날씨가 넘 추워555');
+      
+      await service.createBoard(boardDto1, member);
+      await service.createBoard(boardDto2, member);
+      await service.createBoard(boardDto3, member);
+      await service.createBoard(boardDto4, member);
+      await service.createBoard(boardDto5, member);
+
+      const id: number = 1;
+
+      //when
+      const resultBoard = await service.getBoardById(id);
+
+      //then
+      expect(resultBoard).toBeInstanceOf(Board);
+      expect(resultBoard.title).toEqual('1 게시물입니당!')
+      expect(resultBoard.content).toEqual('갑자기 날씨가 넘 추워111')
+    })
+    it.todo('id로 게시판 조회 - 게시판 없음')
+    it('id로 게시판 조회 - 게시판 없음', async () => {
+      //given
+      const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      const boardDto1 : BoardDto = new BoardDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
+      const boardDto2 : BoardDto = new BoardDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
+      const boardDto3 : BoardDto = new BoardDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
+      const boardDto4 : BoardDto = new BoardDto('4 게시물입니당!', '갑자기 날씨가 넘 추워444');
+      const boardDto5 : BoardDto = new BoardDto('5 게시물입니당!', '갑자기 날씨가 넘 추워555');
+
+      await service.createBoard(boardDto1, member);
+      await service.createBoard(boardDto2, member);
+      await service.createBoard(boardDto3, member);
+      await service.createBoard(boardDto4, member);
+      await service.createBoard(boardDto5, member);
+
+      const id: number = 999; 
+
+      try{
+        //when
+        await service.getBoardById(id);
+      }catch(err){
+        //then
+        expect(err).toBeInstanceOf(NotFoundException);
+        expect(err.message).toEqual(NOT_FOUND_BOARD_MSG)
+      }
+    })
+  })
 
   // == findAllBoards test ==//
   describe('findAllBoards test', () => {
