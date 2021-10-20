@@ -1,5 +1,4 @@
-import { type } from "os";
-import { Member } from "src/member/member.entity";
+import { Member } from "../member/member.entity";
 import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
