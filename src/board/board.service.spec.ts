@@ -32,8 +32,22 @@ class MockBoardRepository{
 
   //repository save()메서드
   async save(board: Board){
-    board.id = this.id++;
-    this.boards.push(board);
+    if(board.id){
+      //update라면
+      this.boards = this.boards.map(each => {
+        if(each.id == board.id){
+          each.title = board.title;
+          each.content = board.content;
+
+          return each;
+        }
+        return each;
+      })
+    }else{
+      //create라면
+      board.id = this.id++;
+      this.boards.push(board);
+    }
   }
 
   //repository delete()메서드
@@ -156,7 +170,7 @@ describe('BoardService', () => {
       member.id = memberId;
       //when
       const resultBoard :Board = await service.createBoard(boardDto, member);
-      
+
       //then
       expect(resultBoard.title).toEqual('첫 게시물입니당!');
       expect(resultBoard.content).toEqual('갑자기 날씨가 넘 추워')
@@ -256,6 +270,89 @@ describe('BoardService', () => {
 
       //then
       await expect(service.deleteBoard(boardId, anotherMember)).rejects.toThrow(
+        new UnauthorizedException(UNAUTHORIZE_ACCESS_RESOURCE_MSG)
+      ) 
+    })
+  })
+
+  // == update test == //
+  describe('updateBoard test', () => {
+    it('게시글 업데이트 - 성공', async () => {
+      //given
+      const memberId = 1;
+      const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      member.id = memberId;
+      
+      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+
+      await service.createBoard(boardDto1, member);
+      await service.createBoard(boardDto2, member);
+      await service.createBoard(boardDto3, member);
+
+      const boardId:number = 2; // 2 id의 게시글 업데이트해보쟈
+
+      const updateBoardDto : BoardDto = new BoardDto('두번째 수정된 두번째 게시물임다!', '감기 다나았어요 ㅎㅎ');
+      
+      //when
+      const updateBoard = await service.updateBoard(boardId, member, updateBoardDto)
+    
+      //then
+      expect(updateBoard.title).toEqual('두번째 수정된 두번째 게시물임다!')
+      expect(updateBoard.content).toEqual('감기 다나았어요 ㅎㅎ');
+      expect(updateBoard.id).toEqual(2)
+    })
+
+    it('게시글 업데이트 - 업데이트할 게시글 없음', async () => {
+      //given
+      const memberId = 1;
+      const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      member.id = memberId;
+      
+      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+
+      await service.createBoard(boardDto1, member);
+      await service.createBoard(boardDto2, member);
+      await service.createBoard(boardDto3, member);
+
+      //when
+      const boardId:number = 100; // 100 id의 게시글 (없는 게시글) 업데이트해보쟈
+      
+      const updateBoardDto : BoardDto = new BoardDto('100번째 수정된 두번째 게시물임다!', '수정수정!@!@');
+      
+      //then
+      await expect(service.updateBoard(boardId, member, updateBoardDto)).rejects.toThrow(
+        new NotFoundException(NOT_FOUND_BOARD_MSG)
+      ) 
+    })
+    it('게시글 업데이트 - 권한 없음', async () => {
+      //given
+      const memberId = 1;
+      const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      member.id = memberId;
+      
+      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+
+      await service.createBoard(boardDto1, member);
+      await service.createBoard(boardDto2, member);
+      await service.createBoard(boardDto3, member);
+
+      const boardId:number = 2; // 2 id의 게시글 업데이트해보쟈
+      
+      const updateBoardDto : BoardDto = new BoardDto('100번째 수정된 두번째 게시물임다!', '수정수정!@!@');
+      
+      //when - 작성한 회원과 다른회원
+      const anotherMemberId = 2;
+      const anotherMember: Member = Member.createMember('2@naver.com', 21, MemberSex.FEMALE, '1234')
+      anotherMember.id = anotherMemberId;
+
+      //then
+      await expect(service.updateBoard(boardId, anotherMember, updateBoardDto)).rejects.toThrow(
         new UnauthorizedException(UNAUTHORIZE_ACCESS_RESOURCE_MSG)
       ) 
     })
