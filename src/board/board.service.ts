@@ -51,6 +51,7 @@ export class BoardService {
         const createdBoard = this.boardRepository.create({
             title,
             content,
+            createdTime: Date.now(), //create createdTime
             member
         })
 
@@ -92,6 +93,7 @@ export class BoardService {
         //update data of board
         foundBoard.title = title;
         foundBoard.content = content;
+        foundBoard.updatedTime = Date.now(); // update updatedTime
 
         await this.boardRepository.save(foundBoard);
 

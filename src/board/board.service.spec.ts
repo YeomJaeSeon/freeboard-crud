@@ -24,7 +24,7 @@ class MockBoardRepository{
   }
 
   //repository create()메서드
-  create({title, content, member} : {title: string, content: string, member: Member}) : Board{
+  create({title, content, createdTime ,member} : {title: string, content: string, createdTime: number ,member: Member}) : Board{
     const newBoard: Board = Board.createBoard(title, content, member);
 
     return newBoard;

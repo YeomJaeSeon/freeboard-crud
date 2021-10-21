@@ -1,5 +1,6 @@
 import { Member } from "../member/member.entity";
-import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { timestamp } from "rxjs";
 
 @Entity()
 export class Board extends BaseEntity{
@@ -12,6 +13,12 @@ export class Board extends BaseEntity{
     @Column()
     content: string;
 
+    @Column({type: "datetime"})
+    createdTime: number;
+
+    @Column({type: "datetime", nullable: true})
+    updatedTime: number;
+
     //연관관계 매핑 (Board : Member = 다대 일)
     @ManyToOne(type => Member, (member) => member.boards, {eager : true})
     member: Member;
@@ -23,6 +30,7 @@ export class Board extends BaseEntity{
         board.title = title;
         board.content = content;
         board.member = member;
+        board.createdTime = Date.now();
 
         return board;
     }
