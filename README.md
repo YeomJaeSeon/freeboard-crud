@@ -64,6 +64,7 @@
   - method : POST
   - request
     ```json
+    //example
     {
       "email": "hello@naver.com",
       "age": 25,
