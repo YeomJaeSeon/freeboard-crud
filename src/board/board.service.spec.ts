@@ -6,7 +6,7 @@ import { Board } from './board.entity';
 import { BoardService } from './board.service';
 import { BoardDto } from './dto/board.dto';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { BOARD_DELETE_SUCCESS_MSG, NOT_FOUND_BOARD_MSG, UNAUTHORIZE_ACCESS_DELETE_MSG } from '../message/message';
+import { BOARD_DELETE_SUCCESS_MSG, NOT_FOUND_BOARD_MSG, UNAUTHORIZE_ACCESS_RESOURCE_MSG } from '../message/message';
 
 // == MockBoardRepository start == //
 class MockBoardRepository{
@@ -256,7 +256,7 @@ describe('BoardService', () => {
 
       //then
       await expect(service.deleteBoard(boardId, anotherMember)).rejects.toThrow(
-        new UnauthorizedException(UNAUTHORIZE_ACCESS_DELETE_MSG)
+        new UnauthorizedException(UNAUTHORIZE_ACCESS_RESOURCE_MSG)
       ) 
     })
   })

@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from 'src/member/member.entity';
-import { BOARD_DELETE_SUCCESS_MSG, NOT_FOUND_BOARD_MSG, UNAUTHORIZE_ACCESS_DELETE_MSG } from '../message/message';
+import { BOARD_DELETE_SUCCESS_MSG, NOT_FOUND_BOARD_MSG, UNAUTHORIZE_ACCESS_RESOURCE_MSG } from '../message/message';
 import { Repository } from 'typeorm';
 import { Board } from './board.entity';
 import { BoardDto } from './dto/board.dto';
@@ -62,13 +62,39 @@ export class BoardService {
         //조회하고
         const foundBoard = await this.getBoardById(id);
 
-        if(foundBoard.member.id !== member.id){
-            //다른 회원이 삭제하려 접근하면 예외발생
-            throw new UnauthorizedException(UNAUTHORIZE_ACCESS_DELETE_MSG)
-        }
+        //check validate(자원에 접근하는 유저가 권한이 있는지)
+        this.checkValidate(foundBoard, member);
 
         await this.boardRepository.delete(id);
 
         return BOARD_DELETE_SUCCESS_MSG;
+    }
+
+    // == update == //
+    async updateBoard(
+        boardId: number,
+        member: Member,
+        boardDto : BoardDto
+    ) : Promise<Board>{
+        const foundBoard = await this.getBoardById(boardId);
+
+        //check validate(자원에 접근하는 유저가 권한이 있는지)
+        this.checkValidate(foundBoard, member);
+
+        const { title, content } = boardDto;
+
+        //update data of board
+        foundBoard.title = title;
+        foundBoard.content = content;
+
+        await this.boardRepository.save(foundBoard);
+
+        return foundBoard;
+    }
+
+    private checkValidate(board : Board, member: Member) : void{
+        if(board.member.id !== member.id){
+            throw new UnauthorizedException(UNAUTHORIZE_ACCESS_RESOURCE_MSG);
+        }
     }
 }
