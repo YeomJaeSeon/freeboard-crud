@@ -38,6 +38,8 @@ export class BoardService {
             take: limit
         });
 
+        this.logger.debug(JSON.stringify(foundBoards))
+
         const boardsResponseDto = this.entityToBoardsResponseDto(foundBoards.map(each => this.entityToBoardResponseDto(each)))
 
         return boardsResponseDto;
