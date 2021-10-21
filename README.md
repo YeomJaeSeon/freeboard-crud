@@ -7,14 +7,14 @@
     - 방법 : 회원가입에 필요한 간단한 데이터를 통해 회원가입 기능을 만듬(email, age, sex, password). 비밀번호는 요청이 들어온 비밀번호를 바로 db에 저장하지 않고 bcryptjs 라이브러리를 통해 salt + hash로 저장함, 그리고 email은 unique 제약조건을 줘 db내에 unique하게 존재하도록함. 또 sex 는 MemberSex enum을 이용함.
     - 이유 : 바로 비밀번호가 db에 저장이 되면 보안상 취약하므로 암호화 해서 db에 저장함, email을 통해 사용자를 유일하게 구분하기 위해(pk인 id도 있지만 어플리케이션 측면에서 중복된 이메일을 사용할순 없기에), enum을 사용한 이유는 'MALE', 'FEMALE'이라는 두 데이터 타입을 상수로써 존재하게 하기 위해
   - 로그인
-    - 방법 : 이메일과 비밀번호로 로그인, 로그인을 하면 토큰(jwt - 로그인한 회원의 이메일과 만료기간을 넣은)을 응답한다. 그리고 요청이들어온 비밀번호는 암호화가 되어있지 않으므로 bcryptjs의 compare 함수를 통해 로그인, 그리고 passport라이브러리를 통해 jwt토큰을 헤더에 넣어서 오는 요청이 적절한지 판단하게함(요청의 어디부분에서 토큰이 오는지, secret과 같아서 적절한 토큰인지, 만료기간은 지나지 않았는지).
-    - 이유 : 게시글의 Create, Update, Delete는 인증이 된 사용자만 접근하게 하고 싶음 그래서 인증기능이 필요했음. 만약 jwt을 사용하지 않는다면 해당 자원에 접근할때마다 로그인해야함. (이부분은 클라이언트에서 쿠키나 스토리지로 응답한 토큰을 가지고있어야함.) jwt와 passport는 이러한 인증을 쉽게 가능토록함. 또 Create, Update는 해당 게시글을 만든 사용자만 접근할수 있어야하므로 인가기능도 필요했음. jwt토큰 응답시 payload(jwt의)부분에 회원의 이메일을 넣고 응답하면 create나 update 접근시 요청 헤더에 jwt토큰(이메일 데이터가 있는)을 넣은 상태로 요청하기에, 서버에서는 토큰에서 필요한 이메일을 바로 꺼내서 해당 유저가 만든 게시글인지 확인하게함. 이렇게 jwt를 통해 간단하게 인증과 인가를 처리함. (그러므로 인증된 유저만 접근할수 있는 자원은 헤더에 로그인시 받은 토큰을 넣은 상태로 요청해야함.)
+    - 방법 : 이메일과 비밀번호로 로그인, 로그인을 하면 토큰(jwt - 로그인한 회원의 이메일과 만료기간을 넣은)을 응답한다. 그리고 요청이 들어온 비밀번호는 암호화가 되어있지 않으므로 bcryptjs의 compare 함수를 통해 로그인, 그리고 passport라이브러리를 통해 jwt토큰을 헤더에 넣어서 오는 요청이 적절한지 판단하게함(요청의 어디부분에서 토큰이 오는지, secret과 같아서 적절한 토큰인지, 만료기간은 지나지 않았는지 확인).
+    - 이유 : 게시글의 Create, Update, Delete는 인증이 된 사용자만 접근하게 하고 싶음 그래서 인증기능이 필요했음. 만약 jwt을 사용하지 않는다면 해당 자원에 접근할때마다 로그인해야함. (이부분은 클라이언트에서 쿠키나 스토리지로 응답한 토큰을 가지고있어야함.) jwt와 passport는 이러한 인증을 쉽게 가능토록함. 또 Create, Update는 해당 게시글을 만든 사용자만 접근할수 있어야하므로 인가 기능도 필요했음. jwt토큰 응답시 payload(jwt의)부분에 회원의 이메일을 넣고 응답하면 create나 update 접근시 요청 헤더에 jwt토큰(이메일 데이터가 있는)을 넣은 상태로 요청하기에, 서버에서는 토큰에서 필요한 이메일(로그인한 유저의 이메일)을 바로 꺼내서 해당 유저가 만든 게시글인지 확인하게함. 이렇게 jwt를 통해 간단하게 인증과 인가를 처리함. (그러므로 인증된 유저만 접근할수 있는 자원은 헤더에 로그인시 받은 토큰을 넣은 상태로 요청해야함.)
 - Board module
   - Create
     - 방법 : 인증된 회원만 생성이 가능하게 함.
     - 이유 : 추후에 해당 게시글을 생성한 유저만 update, delete를 할수 있으므로 이를 위해서 로그인한 회원만 생성가능하게함
   - Read
-    - 방법 : 하나만 읽을수도, pagination을 통해 여러개 읽을수 있음. 인증된 회원이 아니더라도 읽으수 있음
+    - 방법 : 하나만 읽을수도, pagination을 통해 여러개 읽을수 있음. 인증된 회원이 아니더라도 읽을 수 있음
     - 이유 : 게시글을 볼 때 클릭해서 하나의 게시글만 보고싶을수 있으므로, 또 게시글 목록을 보기 위해선 페이징 기능을 통해 쉽게 목록들을 볼수 있어야 하므로. 인증이 되지않은 회원도 게시글목록이나 게시글을 읽을수 있게 한 이유는 자유로운 게시판으로 누구나 와서 읽을수 있는 게시판 웹어플리케이션을 생각했기 때문.
   - Update
     - 방법 : 인가된 회원만 수정가능.
@@ -22,6 +22,8 @@
   - Delete
     - 방법 : 인가된 회원만 삭제가능
     - 이유 : 누구나 게시글을 삭제하면 아무도 이 게시판을 이용하지 않을거라 생각했기에.. (물론 과제 요청사항이기도함.)
+- typeorm
+  - 테이블과 객체간의 간극을 줄여줄 typeorm사용 (board : member = 다대일 관계)
 
 ### 테스트
 
@@ -74,8 +76,9 @@
       ```text
       회원가입 성공
       ```
-    - 400 (example)
+    - 400 
       ```json
+      // example
       {
         "statusCode": 400,
         "message": [
@@ -97,6 +100,7 @@
   - method : POST
   - request
     ```json
+    //example
     {
       "email": "box@naver.com",
       "password": "abcd1234"
@@ -105,10 +109,22 @@
   - response
     - 200
       ```json
+      //example
       {
         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJveEBuYXZlci5jb20iLCJpYXQiOjE2MzQ4MDM1NTksImV4cCI6MTYzNDgwNzE1OX0.Moxom-bNSVxvdwJyei625PULl9QBe7afAXhPpNKPQuc"
       }
       ```
+    - 400
+    ```json
+    //example
+    {
+      "statusCode": 400,
+      "message": [
+          "이메일 형식이어야 함"
+      ],
+      "error": "Bad Request"
+    }
+    ```
     - 401
       ```json
       {
@@ -128,6 +144,7 @@
   - method : POST
   - request
     ```json
+    //example
     {
       "title": " 저녁 추천좀",
       "content": "가을이니 전어가 땡기네욤"
@@ -137,6 +154,7 @@
     - 200
       ```json
       //생성된 데이터를 응답
+      //example
       {
         "data": {
             "id": 19,
@@ -154,15 +172,9 @@
         }
       }
       ```
-    - 401
-      ```json
-      {
-        "statusCode": 401,
-        "message": "Unauthorized"
-      }
-      ```
     - 400
       ```json
+      //example
       {
         "statusCode": 400,
         "message": [
@@ -170,6 +182,13 @@
             "empty 값은 허용되지 않습니다."
         ],
         "error": "Bad Request"
+      }
+      ```
+    - 401
+      ```json
+      {
+        "statusCode": 401,
+        "message": "Unauthorized"
       }
       ```
   - request validation
@@ -187,6 +206,7 @@
   - response
     - 200
       ```json
+      //example
       {
         "data": [
             {
@@ -237,6 +257,7 @@
       ```
     - 400
       ```json
+      //example
       {
           "statusCode": 400,
           "message": [
@@ -259,6 +280,7 @@
   - response
     - 200
       ```json
+      //example
       {
         "data": {
             "id": 3,
@@ -330,6 +352,7 @@
   - request
     ```json
     //수정할 내용 요청
+    //example
     {
         "title": "전어 추천좀(수정글)",
         "content": "ㅠㅠㅠ 급합니다 젭알.."
@@ -338,6 +361,8 @@
   - response
     - 200
       ```json
+      //수정한 내용 응답
+      //example
       {
           "data": {
               "id": 19,
@@ -357,6 +382,7 @@
       ```
     - 400
       ```json
+      //example
       {
           "statusCode": 400,
           "message": [
@@ -387,8 +413,17 @@
     title : not empty, string type
     content : string type
     ```
-  
+## stack
 
+- nestjs
+- typescript
+- sqlite3
+- typeorm
+- jwt
+
+## erd
+
+<a href="https://www.erdcloud.com/d/93F5FYqhpnLdt7u4Z">erdcloud link</a>
 
 ## dev - 고민들 & 해결
 - [x] board CRUD 접근 모드 로그인을 해야할까?
