@@ -1,73 +1,66 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+## dev
+- [x] board CRUD 접근 모드 로그인을 해야할까?
+  - CUD만 로그인(인증)을 한 유저만 
+접근 가능하게 
+접근 가능하게 하고
+Read는 
+로그인을 하지 
+로그인을 하지 않은 유저도 
+로그인을 하지 않은 유저도 접근할수 
+있도록하자.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+  - useGuard레벨을 
+컨트롤러에서 
+컨트롤러에서 핸들러로 
+내림.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- [x] unit테스트인데 
+db에 
+접근해서 
+접근해서 직접 
+접근해서 직접 데이터를 
+접근해서 직접 데이터를 넣거나 
+접근해서 직접 데이터를 넣거나 가져와야하나?
 
-## Description
+  - spec.ts(test)파일 
+내에 
+MockRepository객체를 만들어 
+typeorm에서 
+제공하는 
+제공하는 메서드들을 
+제공하는 메서드들을 커스텀하게 
+구현함
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+  - test시 
+내가만든 
+mockRepository의 메서드가 호출되어 db에 접근 이루어지지않게 변경.
 
-## Installation
+- [x] request dto enum validation 체크
+  - class-validator 의 `@IsEnum()` 데코레이터를 통해 요청 데이터 유효성 체크
+- [x] use jwtModule in test
+  - testing module에서도 jwtModule import를 해줘야 사용가능
+```typescript
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      //testing module에도 똑같이 JwtModule을 넣어줘야 test에서 사용가능
+      imports: [
+        JwtModule.register({
+          secret: {secret}, 
+          signOptions : {
+          expiresIn: {expireTimes} 
+        }
+      }),
+      ],
+      providers: [
+        MemberService,
+        {
+          provide: getRepositoryToken(Member),
+          useClass: MockMemberRepository,
+        },
+      ],
+    }).compile();
 
-```bash
-$ npm install
+    service = module.get<MemberService>(MemberService);
+    jwtService = module.get<JwtService>(JwtService);
+  });
 ```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
