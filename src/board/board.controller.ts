@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Logger, Param, ParseIntPipe, Patch, Post
 import { AuthGuard } from '@nestjs/passport';
 import { Board } from './board.entity';
 import { BoardService } from './board.service';
+import { BoardsResponseDto } from './dto/boards_response.dto';
 import { BoardRequestDto } from './dto/board_request.dto';
 import { BoardResponseDto } from './dto/board_response.dto';
 import { PaginationQueryDto } from './dto/pagination_query.dto';
@@ -32,7 +33,7 @@ export class BoardController {
     @UsePipes(ValidationPipe)
     getAllBoards(
         @Query() query: PaginationQueryDto
-    ) : Promise<BoardResponseDto[]>{
+    ) : Promise<BoardsResponseDto>{
         this.logger.debug(`limit : ${query.limit}`)
         this.logger.debug(`offset : ${query.offset}`)
 

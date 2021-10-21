@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Board } from './board.entity';
 import { BoardRequestDto } from './dto/board_request.dto';
 import { BoardResponseDto } from './dto/board_response.dto';
+import { BoardsResponseDto } from './dto/boards_response.dto';
 
 @Injectable()
 export class BoardService {
@@ -22,15 +23,13 @@ export class BoardService {
         const foundBoard = await this.getOne(id);
 
         //entity -> response
-        const boardResponseDto :BoardResponseDto = this.entityToDto(foundBoard);
-
-        this.entityToDto(foundBoard);
+        const boardResponseDto :BoardResponseDto = this.entityToBoardResponseDto(foundBoard);
 
         return boardResponseDto;
     }
 
     // == getAllBoards == //
-    async getAllBoards(limit: number, offset: number): Promise<BoardResponseDto[]>{
+    async getAllBoards(limit: number, offset: number): Promise<BoardsResponseDto>{
         this.logger.debug(`limit : ${limit}`)
         this.logger.debug(`offset : ${offset}`)
 
@@ -39,11 +38,9 @@ export class BoardService {
             take: limit
         });
 
-        // entitiy -> dto
-        const boardResponseDtos: BoardResponseDto[] =
-        foundBoards.map(each => this.entityToDto(each))
+        const boardsResponseDto = this.entityToBoardsResponseDto(foundBoards.map(each => this.entityToBoardResponseDto(each)))
 
-        return boardResponseDtos;
+        return boardsResponseDto;
     }
 
     //== Create == //
@@ -64,7 +61,7 @@ export class BoardService {
         await this.boardRepository.save(createdBoard);
 
         // entity -> dto
-        const boardResponseDto :BoardResponseDto = this.entityToDto(createdBoard);
+        const boardResponseDto :BoardResponseDto = this.entityToBoardResponseDto(createdBoard);
 
         //생성된 게시판 리턴
         return boardResponseDto;
@@ -107,7 +104,7 @@ export class BoardService {
         await this.boardRepository.save(foundBoard);
 
         // entity -> dto
-        const boardResponseDto :BoardResponseDto = this.entityToDto(foundBoard);
+        const boardResponseDto :BoardResponseDto = this.entityToBoardResponseDto(foundBoard);
 
         return boardResponseDto;
     }
@@ -132,8 +129,8 @@ export class BoardService {
         return foundBoard;
     }
 
-    //entitiy to Dto
-    private entityToDto(board: Board): BoardResponseDto{
+    //entitiy to BoardResponseDto
+    private entityToBoardResponseDto(board: Board): BoardResponseDto{
         const boardResponseDto :BoardResponseDto = new BoardResponseDto(
             board.id,
             board.title,
@@ -144,5 +141,13 @@ export class BoardService {
         )
 
         return boardResponseDto;
+    }
+
+    //entity to BoardsResponseDto
+    private entityToBoardsResponseDto(boardResponseDtos: BoardResponseDto[]): BoardsResponseDto{
+        // BoardResponseDto[] -> BoardsResponseDto
+        const boardsResponseDto : BoardsResponseDto = new BoardsResponseDto(boardResponseDtos);
+
+        return boardsResponseDto;
     }
 }

@@ -101,8 +101,8 @@ describe('BoardService', () => {
 
       //then
       expect(resultBoard).toBeInstanceOf(BoardResponseDto);
-      expect(resultBoard._title).toEqual('1 게시물입니당!')
-      expect(resultBoard._content).toEqual('갑자기 날씨가 넘 추워111')
+      expect(resultBoard._data.title).toEqual('1 게시물입니당!')
+      expect(resultBoard._data.content).toEqual('갑자기 날씨가 넘 추워111')
     })
     it('id로 게시판 조회 - 게시판 없음', async () => {
       //given
@@ -156,8 +156,8 @@ describe('BoardService', () => {
       const result = await service.getAllBoards(30, 1); // 1페이지의 30개 = 0 ~ 29 index
 
       //then
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toEqual(5);
+      expect(result._data).toBeInstanceOf(Array);
+      expect(result._count).toEqual(5);
     })
   })
 
@@ -173,9 +173,9 @@ describe('BoardService', () => {
       const resultBoard :BoardResponseDto = await service.createBoard(boardDto, member);
 
       //then
-      expect(resultBoard._title).toEqual('첫 게시물입니당!');
-      expect(resultBoard._content).toEqual('갑자기 날씨가 넘 추워')
-      expect(resultBoard._member).toEqual(member);
+      expect(resultBoard._data.title).toEqual('첫 게시물입니당!');
+      expect(resultBoard._data.content).toEqual('갑자기 날씨가 넘 추워')
+      expect(resultBoard._data.member).toEqual(member);
     })
     it('한 회원이 게시물 세개 생성', async () => {
       //given
@@ -193,8 +193,8 @@ describe('BoardService', () => {
       const result = await service.getAllBoards(30, 1);
 
       //then
-      expect(result).toBeInstanceOf(Array);
-      expect(result.length).toEqual(3);
+      expect(result._data).toBeInstanceOf(Array);
+      expect(result._count).toEqual(3);
     })
   })
 
@@ -222,7 +222,7 @@ describe('BoardService', () => {
 
       //then
       expect(msg).toEqual(BOARD_DELETE_SUCCESS_MSG);
-      expect(result.length).toEqual(2);
+      expect(result._count).toEqual(2);
     })
 
     it('게시글 삭제 - 없는 게시글 예외발생', async () => {
@@ -300,9 +300,9 @@ describe('BoardService', () => {
       const updateBoard = await service.updateBoard(boardId, member, updateBoardDto)
     
       //then
-      expect(updateBoard._title).toEqual('두번째 수정된 두번째 게시물임다!')
-      expect(updateBoard._content).toEqual('감기 다나았어요 ㅎㅎ');
-      expect(updateBoard._id).toEqual(2)
+      expect(updateBoard._data.title).toEqual('두번째 수정된 두번째 게시물임다!')
+      expect(updateBoard._data.content).toEqual('감기 다나았어요 ㅎㅎ');
+      expect(updateBoard._data.id).toEqual(2)
     })
 
     it('게시글 업데이트 - 업데이트할 게시글 없음', async () => {
