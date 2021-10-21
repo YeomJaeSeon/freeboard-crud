@@ -64,4 +64,7 @@ mockRepository의 메서드가 호출되어 db에 접근 이루어지지않게 �
     jwtService = module.get<JwtService>(JwtService);
   });
 ```
-- [ ] board entity를 바로 응답하기 보단 dto로 변환해서 응답하고싶다.. service로직에서 entity를 dto로 바꿀까, controller에서 바꿀까?
+- [x] board entity를 바로 응답하기 보단 dto로 변환해서 응답하고싶다.. service로직에서 entity를 dto로 바꿀까, controller에서 바꿀까?
+  - service에서 entity를 dto로 바꿈
+  - 별도의 private메서드를 통해서 변경
+  - getBoardById라는 메서드를 통해 하나의 board 아이템 조회하고 예외처리하는 로직은 getOne이라는 메서드를 만들어 분리함. - deleteBoard, updateBoard에선 getBoardById 메서드를 의존하는게 아닌 getOne메서드를 의존하는 것으로 변경
