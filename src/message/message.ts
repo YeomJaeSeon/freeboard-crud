@@ -22,3 +22,9 @@ export const SIGNUP_AGE_DTO_MAX_VALIDATION_MSG: string = '나이는 최대 200�
 
 export const PAGINATION_LIMIT_DTO_VALIDATION_MSG: string = 'limit쿼리 필수값입니다.';
 export const PAGINATION_OFFSET_DTO_VALIDATION_MSG: string = 'offset쿼리 필수값입니다.';
+
+export const NUMBER_FORMAT_VALIDATION_MSG: string = 'number이어야 합니다.'
+export const NOT_EMPTY_VALIDATION_MSG: string = 'empty 값은 허용되지 않습니다.'
+export const STRING_FORMAT_VALIDATION_MSG: string = 'string이어야 합니다.'
+export const MEMBERSEX_ENUM_FORMAT_VALIDATION_MSG: string = "'FEMALE', 'MALE'중 하나로 요청해야합니다."
+export const EMAIL_FORMAT_VALIDATION_MSG: string = '이메일 형식이어야 함'

@@ -7,7 +7,8 @@ import {
   Matches, Max,
   MaxLength, Min
 } from 'class-validator';
-import { SIGNUP_AGE_DTO_MAX_VALIDATION_MSG, SIGNUP_AGE_DTO_MIN_VALIDATION_MSG, SIGNUP_PASSWORD_DTO_MINLENGTH_REG_VALIDATION_MSG, SIGNUP_PASSWROD_DTO_MAXLENGTH_VALIDATION_MSG } from '../../message/message';
+import { PASSWORD_REG } from '../../common/reg.common';
+import { EMAIL_FORMAT_VALIDATION_MSG, MEMBERSEX_ENUM_FORMAT_VALIDATION_MSG, NOT_EMPTY_VALIDATION_MSG, NUMBER_FORMAT_VALIDATION_MSG, SIGNUP_AGE_DTO_MAX_VALIDATION_MSG, SIGNUP_AGE_DTO_MIN_VALIDATION_MSG, SIGNUP_PASSWORD_DTO_MINLENGTH_REG_VALIDATION_MSG, SIGNUP_PASSWROD_DTO_MAXLENGTH_VALIDATION_MSG, STRING_FORMAT_VALIDATION_MSG } from '../../message/message';
 import { MemberSex } from '../member.sex-enum';
 
 export class SignyUpMemberDto {
@@ -18,12 +19,20 @@ export class SignyUpMemberDto {
     this._password = password;
   }
 
-  @IsNotEmpty()
-  @IsEmail()
+  @IsNotEmpty({
+    message: NOT_EMPTY_VALIDATION_MSG
+  })
+  @IsEmail({}, {
+    message: EMAIL_FORMAT_VALIDATION_MSG
+  })
   private _email: string;
 
-  @IsNotEmpty()
-  @IsNumber()
+  @IsNotEmpty({
+    message: NOT_EMPTY_VALIDATION_MSG
+  })
+  @IsNumber({}, {
+    message: NUMBER_FORMAT_VALIDATION_MSG
+  })
   @Min(1, {
     message: SIGNUP_AGE_DTO_MIN_VALIDATION_MSG
   })
@@ -32,13 +41,21 @@ export class SignyUpMemberDto {
   })
   private _age: number;
 
-  @IsNotEmpty()
-  @IsEnum(MemberSex) // request 값이 MemberSex Enum Value여야한다.
+  @IsNotEmpty({
+    message: NOT_EMPTY_VALIDATION_MSG
+  })
+  @IsEnum(MemberSex,{
+    message: MEMBERSEX_ENUM_FORMAT_VALIDATION_MSG
+  }) // request 값이 MemberSex Enum Value여야한다.
   private _sex: MemberSex;
 
-  @IsNotEmpty()
-  @IsString()
-  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+  @IsNotEmpty({
+    message: NOT_EMPTY_VALIDATION_MSG
+  })
+  @IsString({
+    message: STRING_FORMAT_VALIDATION_MSG
+  })
+  @Matches(PASSWORD_REG, {
     message: SIGNUP_PASSWORD_DTO_MINLENGTH_REG_VALIDATION_MSG
   })
   @MaxLength(15, {

@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { NOT_EMPTY_VALIDATION_MSG, EMAIL_FORMAT_VALIDATION_MSG, STRING_FORMAT_VALIDATION_MSG } from "../../message/message";
 
 export class LoginMemberDto{
 
@@ -7,12 +8,20 @@ export class LoginMemberDto{
         this._password = password;
       }
 
-    @IsNotEmpty()
-    @IsEmail()
+    @IsNotEmpty({
+        message: NOT_EMPTY_VALIDATION_MSG
+    })
+    @IsEmail({},{
+        message: EMAIL_FORMAT_VALIDATION_MSG
+    })
     private _email: string;
 
-    @IsNotEmpty()
-    @IsString()
+    @IsNotEmpty({
+        message: NOT_EMPTY_VALIDATION_MSG
+    })
+    @IsString({
+        message: STRING_FORMAT_VALIDATION_MSG
+    })
     private _password: string;
 
     //email - getter

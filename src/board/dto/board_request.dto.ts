@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString } from "class-validator";
+import { NOT_EMPTY_VALIDATION_MSG, STRING_FORMAT_VALIDATION_MSG } from "../../message/message";
 
 export class BoardRequestDto{
 
@@ -7,11 +8,17 @@ export class BoardRequestDto{
         this._content = content;
     }
     
-    @IsNotEmpty()
-    @IsString()
+    @IsNotEmpty({
+        message: NOT_EMPTY_VALIDATION_MSG
+    })
+    @IsString({
+        message: STRING_FORMAT_VALIDATION_MSG
+    })
     private _title: string;
 
-    @IsString()
+    @IsString({
+        message: STRING_FORMAT_VALIDATION_MSG
+    })
     private _content: string;
 
     //title - getter

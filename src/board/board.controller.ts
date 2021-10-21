@@ -19,7 +19,6 @@ import { PaginationQueryDto } from './dto/pagination_query.dto';
  */
 
 @Controller('boards')
-//TODO: outputDto도 만들어보쟈
 export class BoardController {
     private logger = new Logger('BoardController')
 
