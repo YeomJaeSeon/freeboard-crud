@@ -4,12 +4,20 @@ import { Board } from './board.entity';
 import { BoardService } from './board.service';
 import { BoardDto } from './dto/board.dto';
 
+/**
+ * ***인증하지 않은(로그인 하지않은) 회원도 요청할수 있는 핸들러***
+ * getAllBoards
+ * getBoardById
+ * 
+ * ***인증한 회원(로그인 한)만 요청할수 있는 핸들러***
+ * createBoard
+ * deleteBoard -- service로직에서 인가 확인함. 
+ * updateBoard -- service로직에서 인가 확인함.
+ */
+
 @Controller('boards')
-@UseGuards(AuthGuard()) //인증된 멤버만 BoardController에 요청가능
-//TODO: getAllBoards라던가 getBoardById등은 꼭 로그인해야 볼수있나? - 생각
 //TODO: board의 필드 더 추가(생성 시간, 수정시간등등..)
 //TODO: memberDto, boardDto - 정규식등 좀더 강화해보자.
-//TODO: getAllBoards의 pagination도 해결해보자.
 //TODO: outputDto도 만들어보쟈
 export class BoardController {
     private logger = new Logger('BoardController')
@@ -32,6 +40,7 @@ export class BoardController {
 
     @Post()
     @UsePipes(ValidationPipe)
+    @UseGuards(AuthGuard()) //인증된 멤버만 create 요청가능
     createBoard(
         @Body() boardDto: BoardDto,
         @Req() req
@@ -48,6 +57,7 @@ export class BoardController {
     }
 
     @Delete('/:id')
+    @UseGuards(AuthGuard()) //인증된 멤버만 delete 요청가능 - 인가는 service 로직에 있음
     deleteBoard(
         @Param('id') id: number,
         @Req() req        
@@ -57,6 +67,7 @@ export class BoardController {
 
     @Patch('/:id')
     @UsePipes(ValidationPipe)
+    @UseGuards(AuthGuard()) //인증된 멤버만 update 요청가능 - 인가는 service로직에 있음
     updateBoard(
         @Param('id') id : number,
         @Body() boardDto: BoardDto,
