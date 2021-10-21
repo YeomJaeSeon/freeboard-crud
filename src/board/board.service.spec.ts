@@ -5,8 +5,8 @@ import { Member } from '../member/member.entity';
 import { Board } from './board.entity';
 import { BoardService } from './board.service';
 import { BoardDto } from './dto/board.dto';
-import { NotFoundException } from '@nestjs/common';
-import { NOT_FOUND_BOARD_MSG } from '../message/message';
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BOARD_DELETE_SUCCESS_MSG, NOT_FOUND_BOARD_MSG, UNAUTHORIZE_ACCESS_DELETE_MSG } from '../message/message';
 
 // == MockBoardRepository start == //
 class MockBoardRepository{
@@ -35,6 +35,11 @@ class MockBoardRepository{
     board.id = this.id++;
     this.boards.push(board);
   }
+
+  //repository delete()메서드
+  async delete(id: number){
+    this.boards = this.boards.filter(each => each.id !== id);
+  }
 }
 
 describe('BoardService', () => {
@@ -53,12 +58,15 @@ describe('BoardService', () => {
 
     service = module.get<BoardService>(BoardService);
   });
-  
+ 
   //== getBoardById test ==//
   describe('getBoardById test', () => {
     it('id로 게시판 조회 - 게시판 있음', async () => {
       //given
+      const memberId = 1;
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      member.id = memberId;
+      
       const boardDto1 : BoardDto = new BoardDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
       const boardDto2 : BoardDto = new BoardDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
       const boardDto3 : BoardDto = new BoardDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
@@ -83,7 +91,10 @@ describe('BoardService', () => {
     })
     it('id로 게시판 조회 - 게시판 없음', async () => {
       //given
+      const memberId = 1;
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      member.id = memberId;
+      
       const boardDto1 : BoardDto = new BoardDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
       const boardDto2 : BoardDto = new BoardDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
       const boardDto3 : BoardDto = new BoardDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
@@ -113,7 +124,10 @@ describe('BoardService', () => {
   describe('findAllBoards test', () => {
     it('모든 게시물 조회', async () => {
       //given
+      const memberId = 1;
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      member.id = memberId
+      
       const boardDto1 : BoardDto = new BoardDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
       const boardDto2 : BoardDto = new BoardDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
       const boardDto3 : BoardDto = new BoardDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
@@ -140,8 +154,9 @@ describe('BoardService', () => {
     it('게시물 생성 성공', async () => {
       //given
       const boardDto : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const memberId = 1;
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
-
+      member.id = memberId;
       //when
       const resultBoard :Board = await service.createBoard(boardDto, member);
       
@@ -152,7 +167,9 @@ describe('BoardService', () => {
     })
     it('한 회원이 게시물 세개 생성', async () => {
       //given
+      const memberId = 1;
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      member.id = memberId;
       const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
       const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
       const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
@@ -166,6 +183,89 @@ describe('BoardService', () => {
       //then
       expect(result).toBeInstanceOf(Array);
       expect(result.length).toEqual(3);
+    })
+  })
+
+  //== deleteBoard test ==//
+  describe('deleteBoard test', () => {
+    it('게시글 삭제', async () => {
+      //given
+      const memberId = 1;
+      const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      member.id = memberId;
+      
+      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+
+      await service.createBoard(boardDto1, member);
+      await service.createBoard(boardDto2, member);
+      await service.createBoard(boardDto3, member);
+
+      const boardId:number = 2; //두번째 게시글 삭제해보자
+
+      //when
+      const msg = await service.deleteBoard(boardId, member);
+      const result = await service.getAllBoards();
+
+      //then
+      expect(msg).toEqual(BOARD_DELETE_SUCCESS_MSG);
+      expect(result.length).toEqual(2);
+    })
+
+    it('게시글 삭제 - 없는 게시글 예외발생', async () => {
+      //given
+      const memberId = 1;
+      const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      member.id = memberId;
+      
+      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+
+      await service.createBoard(boardDto1, member);
+      await service.createBoard(boardDto2, member);
+      await service.createBoard(boardDto3, member);
+
+      const boardId:number = 100; //100 id의 게시글 삭제해보자
+
+      try{
+        //when
+        await service.deleteBoard(boardId, member);
+      }catch(err){
+        //then
+        expect(err).toBeInstanceOf(NotFoundException)
+        expect(err.message).toEqual(NOT_FOUND_BOARD_MSG)
+      }
+    })
+
+    it('게시글 삭제 - 권한이 없어서 삭제 거부', async () => {
+      //given
+      const memberId = 1;
+      const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
+      member.id = memberId;
+      
+      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+
+      await service.createBoard(boardDto1, member);
+      await service.createBoard(boardDto2, member);
+      await service.createBoard(boardDto3, member);
+
+      const boardId:number = 2; // 2 id의 게시글 삭제해보자
+
+      const anotherMemberId = 2;
+      const anotherMember: Member = Member.createMember('2@naver.com', 21, MemberSex.FEMALE, '1234')
+      anotherMember.id = anotherMemberId;
+      try{
+        //when
+        await service.deleteBoard(boardId, anotherMember) // 작성한 멤버가 아닌 다른 멤버가 삭제하려 시도할시
+      }catch(err){
+        //then
+        expect(err).toBeInstanceOf(UnauthorizedException)
+        expect(err.message).toEqual(UNAUTHORIZE_ACCESS_DELETE_MSG)
+      }
     })
   })
 });
