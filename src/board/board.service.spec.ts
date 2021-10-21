@@ -1,12 +1,12 @@
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { MemberSex } from '../member/member.sex-enum';
 import { Member } from '../member/member.entity';
+import { MemberSex } from '../member/member.sex-enum';
+import { BOARD_DELETE_SUCCESS_MSG, NOT_FOUND_BOARD_MSG, UNAUTHORIZE_ACCESS_RESOURCE_MSG } from '../message/message';
 import { Board } from './board.entity';
 import { BoardService } from './board.service';
 import { BoardDto } from './dto/board.dto';
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { BOARD_DELETE_SUCCESS_MSG, NOT_FOUND_BOARD_MSG, UNAUTHORIZE_ACCESS_RESOURCE_MSG } from '../message/message';
 
 // == MockBoardRepository start == //
 class MockBoardRepository{
@@ -152,7 +152,7 @@ describe('BoardService', () => {
       service.createBoard(boardDto5, member);
 
       //when
-      const result = await service.getAllBoards();
+      const result = await service.getAllBoards(30, 1); // 1페이지의 30개 = 0 ~ 29 index
 
       //then
       expect(result).toBeInstanceOf(Array);
@@ -189,7 +189,7 @@ describe('BoardService', () => {
       service.createBoard(boardDto1, member);
       service.createBoard(boardDto2, member);
       service.createBoard(boardDto3, member);
-      const result = await service.getAllBoards();
+      const result = await service.getAllBoards(30, 1);
 
       //then
       expect(result).toBeInstanceOf(Array);
@@ -217,7 +217,7 @@ describe('BoardService', () => {
 
       //when
       const msg = await service.deleteBoard(boardId, member);
-      const result = await service.getAllBoards();
+      const result = await service.getAllBoards(30, 1);
 
       //then
       expect(msg).toEqual(BOARD_DELETE_SUCCESS_MSG);

@@ -28,8 +28,14 @@ export class BoardService {
     }
 
     // == getAllBoards == //
-    async getAllBoards(): Promise<Board[]>{
-        const foundBoards = await this.boardRepository.find();
+    async getAllBoards(limit: number, offset: number): Promise<Board[]>{
+        this.logger.debug(`limit : ${limit}`)
+        this.logger.debug(`offset : ${offset}`)
+
+        const foundBoards = await this.boardRepository.find({
+            skip: (offset - 1) * limit,
+            take: limit
+        });
 
         return foundBoards;
     }
