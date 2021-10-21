@@ -16,8 +16,6 @@ import { BoardDto } from './dto/board.dto';
  */
 
 @Controller('boards')
-//TODO: board의 필드 더 추가(생성 시간, 수정시간등등..)
-//TODO: memberDto, boardDto - 정규식등 좀더 강화해보자.
 //TODO: outputDto도 만들어보쟈
 export class BoardController {
     private logger = new Logger('BoardController')

@@ -4,7 +4,10 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
+  Matches, Max,
+  MaxLength, Min
 } from 'class-validator';
+import { SIGNUP_AGE_DTO_MAX_VALIDATION_MSG, SIGNUP_AGE_DTO_MIN_VALIDATION_MSG, SIGNUP_PASSWORD_DTO_MINLENGTH_REG_VALIDATION_MSG, SIGNUP_PASSWROD_DTO_MAXLENGTH_VALIDATION_MSG } from '../../message/message';
 import { MemberSex } from '../member.sex-enum';
 
 export class SignyUpMemberDto {
@@ -21,6 +24,12 @@ export class SignyUpMemberDto {
 
   @IsNotEmpty()
   @IsNumber()
+  @Min(1, {
+    message: SIGNUP_AGE_DTO_MIN_VALIDATION_MSG
+  })
+  @Max(200, {
+    message: SIGNUP_AGE_DTO_MAX_VALIDATION_MSG
+  })
   private _age: number;
 
   @IsNotEmpty()
@@ -29,6 +38,12 @@ export class SignyUpMemberDto {
 
   @IsNotEmpty()
   @IsString()
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, {
+    message: SIGNUP_PASSWORD_DTO_MINLENGTH_REG_VALIDATION_MSG
+  })
+  @MaxLength(15, {
+    message: SIGNUP_PASSWROD_DTO_MAXLENGTH_VALIDATION_MSG
+  })
   private _password: string;
 
   //email - getter

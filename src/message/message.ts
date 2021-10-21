@@ -13,3 +13,9 @@ export const NOT_FOUND_BOARD_MSG: string = '해당 게시판은 존재하지 않
 
 //== 500 ==//
 export const SERVER_ERROR_MSG: string = '서버 에러';
+
+//== dto validation message == //
+export const SIGNUP_PASSWORD_DTO_MINLENGTH_REG_VALIDATION_MSG : string = '최소 8글자이고, 숫자하나와 문자 하나가 포함되어야 합니다.'
+export const SIGNUP_PASSWROD_DTO_MAXLENGTH_VALIDATION_MSG: string = '최대 15글자 입니다.'
+export const SIGNUP_AGE_DTO_MIN_VALIDATION_MSG: string = '나이는 최소 1살입니다.'
+export const SIGNUP_AGE_DTO_MAX_VALIDATION_MSG: string = '나이는 최대 200살입니다.'
