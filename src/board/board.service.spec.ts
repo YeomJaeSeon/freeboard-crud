@@ -6,7 +6,8 @@ import { MemberSex } from '../member/member.sex-enum';
 import { BOARD_DELETE_SUCCESS_MSG, NOT_FOUND_BOARD_MSG, UNAUTHORIZE_ACCESS_RESOURCE_MSG } from '../message/message';
 import { Board } from './board.entity';
 import { BoardService } from './board.service';
-import { BoardDto } from './dto/board.dto';
+import { BoardRequestDto } from './dto/board_request.dto';
+import { BoardResponseDto } from './dto/board_response.dto';
 
 // == MockBoardRepository start == //
 class MockBoardRepository{
@@ -81,11 +82,11 @@ describe('BoardService', () => {
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId;
       
-      const boardDto1 : BoardDto = new BoardDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
-      const boardDto2 : BoardDto = new BoardDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
-      const boardDto3 : BoardDto = new BoardDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
-      const boardDto4 : BoardDto = new BoardDto('4 게시물입니당!', '갑자기 날씨가 넘 추워444');
-      const boardDto5 : BoardDto = new BoardDto('5 게시물입니당!', '갑자기 날씨가 넘 추워555');
+      const boardDto1 : BoardRequestDto = new BoardRequestDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
+      const boardDto2 : BoardRequestDto = new BoardRequestDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
+      const boardDto3 : BoardRequestDto = new BoardRequestDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
+      const boardDto4 : BoardRequestDto = new BoardRequestDto('4 게시물입니당!', '갑자기 날씨가 넘 추워444');
+      const boardDto5 : BoardRequestDto = new BoardRequestDto('5 게시물입니당!', '갑자기 날씨가 넘 추워555');
       
       await service.createBoard(boardDto1, member);
       await service.createBoard(boardDto2, member);
@@ -99,9 +100,9 @@ describe('BoardService', () => {
       const resultBoard = await service.getBoardById(id);
 
       //then
-      expect(resultBoard).toBeInstanceOf(Board);
-      expect(resultBoard.title).toEqual('1 게시물입니당!')
-      expect(resultBoard.content).toEqual('갑자기 날씨가 넘 추워111')
+      expect(resultBoard).toBeInstanceOf(BoardResponseDto);
+      expect(resultBoard._title).toEqual('1 게시물입니당!')
+      expect(resultBoard._content).toEqual('갑자기 날씨가 넘 추워111')
     })
     it('id로 게시판 조회 - 게시판 없음', async () => {
       //given
@@ -109,11 +110,11 @@ describe('BoardService', () => {
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId;
       
-      const boardDto1 : BoardDto = new BoardDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
-      const boardDto2 : BoardDto = new BoardDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
-      const boardDto3 : BoardDto = new BoardDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
-      const boardDto4 : BoardDto = new BoardDto('4 게시물입니당!', '갑자기 날씨가 넘 추워444');
-      const boardDto5 : BoardDto = new BoardDto('5 게시물입니당!', '갑자기 날씨가 넘 추워555');
+      const boardDto1 : BoardRequestDto = new BoardRequestDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
+      const boardDto2 : BoardRequestDto = new BoardRequestDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
+      const boardDto3 : BoardRequestDto = new BoardRequestDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
+      const boardDto4 : BoardRequestDto = new BoardRequestDto('4 게시물입니당!', '갑자기 날씨가 넘 추워444');
+      const boardDto5 : BoardRequestDto = new BoardRequestDto('5 게시물입니당!', '갑자기 날씨가 넘 추워555');
 
       await service.createBoard(boardDto1, member);
       await service.createBoard(boardDto2, member);
@@ -139,11 +140,11 @@ describe('BoardService', () => {
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId
       
-      const boardDto1 : BoardDto = new BoardDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
-      const boardDto2 : BoardDto = new BoardDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
-      const boardDto3 : BoardDto = new BoardDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
-      const boardDto4 : BoardDto = new BoardDto('4 게시물입니당!', '갑자기 날씨가 넘 추워444');
-      const boardDto5 : BoardDto = new BoardDto('5 게시물입니당!', '갑자기 날씨가 넘 추워555');
+      const boardDto1 : BoardRequestDto = new BoardRequestDto('1 게시물입니당!', '갑자기 날씨가 넘 추워111');
+      const boardDto2 : BoardRequestDto = new BoardRequestDto('2 게시물입니당!', '갑자기 날씨가 넘 추워222');
+      const boardDto3 : BoardRequestDto = new BoardRequestDto('3 게시물입니당!', '갑자기 날씨가 넘 추워333');
+      const boardDto4 : BoardRequestDto = new BoardRequestDto('4 게시물입니당!', '갑자기 날씨가 넘 추워444');
+      const boardDto5 : BoardRequestDto = new BoardRequestDto('5 게시물입니당!', '갑자기 날씨가 넘 추워555');
 
       service.createBoard(boardDto1, member);
       service.createBoard(boardDto2, member);
@@ -164,26 +165,26 @@ describe('BoardService', () => {
   describe('createBoard test', () => {
     it('게시물 생성 성공', async () => {
       //given
-      const boardDto : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto : BoardRequestDto = new BoardRequestDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
       const memberId = 1;
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId;
       //when
-      const resultBoard :Board = await service.createBoard(boardDto, member);
+      const resultBoard :BoardResponseDto = await service.createBoard(boardDto, member);
 
       //then
-      expect(resultBoard.title).toEqual('첫 게시물입니당!');
-      expect(resultBoard.content).toEqual('갑자기 날씨가 넘 추워')
-      expect(resultBoard.member).toEqual(member);
+      expect(resultBoard._title).toEqual('첫 게시물입니당!');
+      expect(resultBoard._content).toEqual('갑자기 날씨가 넘 추워')
+      expect(resultBoard._member).toEqual(member);
     })
     it('한 회원이 게시물 세개 생성', async () => {
       //given
       const memberId = 1;
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId;
-      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
-      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
-      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+      const boardDto1 : BoardRequestDto = new BoardRequestDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardRequestDto = new BoardRequestDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardRequestDto = new BoardRequestDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
 
       //when
       service.createBoard(boardDto1, member);
@@ -205,9 +206,9 @@ describe('BoardService', () => {
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId;
       
-      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
-      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
-      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+      const boardDto1 : BoardRequestDto = new BoardRequestDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardRequestDto = new BoardRequestDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardRequestDto = new BoardRequestDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
 
       await service.createBoard(boardDto1, member);
       await service.createBoard(boardDto2, member);
@@ -230,9 +231,9 @@ describe('BoardService', () => {
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId;
       
-      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
-      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
-      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+      const boardDto1 : BoardRequestDto = new BoardRequestDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardRequestDto = new BoardRequestDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardRequestDto = new BoardRequestDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
 
       await service.createBoard(boardDto1, member);
       await service.createBoard(boardDto2, member);
@@ -253,9 +254,9 @@ describe('BoardService', () => {
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId;
       
-      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
-      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
-      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+      const boardDto1 : BoardRequestDto = new BoardRequestDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardRequestDto = new BoardRequestDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardRequestDto = new BoardRequestDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
 
       await service.createBoard(boardDto1, member);
       await service.createBoard(boardDto2, member);
@@ -283,9 +284,9 @@ describe('BoardService', () => {
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId;
       
-      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
-      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
-      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+      const boardDto1 : BoardRequestDto = new BoardRequestDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardRequestDto = new BoardRequestDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardRequestDto = new BoardRequestDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
 
       await service.createBoard(boardDto1, member);
       await service.createBoard(boardDto2, member);
@@ -293,15 +294,15 @@ describe('BoardService', () => {
 
       const boardId:number = 2; // 2 id의 게시글 업데이트해보쟈
 
-      const updateBoardDto : BoardDto = new BoardDto('두번째 수정된 두번째 게시물임다!', '감기 다나았어요 ㅎㅎ');
+      const updateBoardDto : BoardRequestDto = new BoardRequestDto('두번째 수정된 두번째 게시물임다!', '감기 다나았어요 ㅎㅎ');
       
       //when
       const updateBoard = await service.updateBoard(boardId, member, updateBoardDto)
     
       //then
-      expect(updateBoard.title).toEqual('두번째 수정된 두번째 게시물임다!')
-      expect(updateBoard.content).toEqual('감기 다나았어요 ㅎㅎ');
-      expect(updateBoard.id).toEqual(2)
+      expect(updateBoard._title).toEqual('두번째 수정된 두번째 게시물임다!')
+      expect(updateBoard._content).toEqual('감기 다나았어요 ㅎㅎ');
+      expect(updateBoard._id).toEqual(2)
     })
 
     it('게시글 업데이트 - 업데이트할 게시글 없음', async () => {
@@ -310,9 +311,9 @@ describe('BoardService', () => {
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId;
       
-      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
-      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
-      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+      const boardDto1 : BoardRequestDto = new BoardRequestDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardRequestDto = new BoardRequestDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardRequestDto = new BoardRequestDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
 
       await service.createBoard(boardDto1, member);
       await service.createBoard(boardDto2, member);
@@ -321,7 +322,7 @@ describe('BoardService', () => {
       //when
       const boardId:number = 100; // 100 id의 게시글 (없는 게시글) 업데이트해보쟈
       
-      const updateBoardDto : BoardDto = new BoardDto('100번째 수정된 두번째 게시물임다!', '수정수정!@!@');
+      const updateBoardDto : BoardRequestDto = new BoardRequestDto('100번째 수정된 두번째 게시물임다!', '수정수정!@!@');
       
       //then
       await expect(service.updateBoard(boardId, member, updateBoardDto)).rejects.toThrow(
@@ -334,9 +335,9 @@ describe('BoardService', () => {
       const member: Member = Member.createMember('1@naver.com', 20, MemberSex.MALE, '1234');
       member.id = memberId;
       
-      const boardDto1 : BoardDto = new BoardDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
-      const boardDto2 : BoardDto = new BoardDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
-      const boardDto3 : BoardDto = new BoardDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
+      const boardDto1 : BoardRequestDto = new BoardRequestDto('첫 게시물입니당!', '갑자기 날씨가 넘 추워');
+      const boardDto2 : BoardRequestDto = new BoardRequestDto('두번째 게시물입니당!', '감기걸림 ㅠ;;');
+      const boardDto3 : BoardRequestDto = new BoardRequestDto('마지막 게시물입니당!', '그래서 전기장판삼 ㅇㅇ;;');
 
       await service.createBoard(boardDto1, member);
       await service.createBoard(boardDto2, member);
@@ -344,7 +345,7 @@ describe('BoardService', () => {
 
       const boardId:number = 2; // 2 id의 게시글 업데이트해보쟈
       
-      const updateBoardDto : BoardDto = new BoardDto('100번째 수정된 두번째 게시물임다!', '수정수정!@!@');
+      const updateBoardDto : BoardRequestDto = new BoardRequestDto('100번째 수정된 두번째 게시물임다!', '수정수정!@!@');
       
       //when - 작성한 회원과 다른회원
       const anotherMemberId = 2;

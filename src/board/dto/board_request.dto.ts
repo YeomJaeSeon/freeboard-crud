@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class BoardDto{
+export class BoardRequestDto{
 
     constructor(title: string, content: string){
         this._title = title;

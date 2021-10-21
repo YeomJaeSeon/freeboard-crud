@@ -2,7 +2,8 @@ import { Body, Controller, Delete, Get, Logger, Param, ParseIntPipe, Patch, Post
 import { AuthGuard } from '@nestjs/passport';
 import { Board } from './board.entity';
 import { BoardService } from './board.service';
-import { BoardDto } from './dto/board.dto';
+import { BoardRequestDto } from './dto/board_request.dto';
+import { BoardResponseDto } from './dto/board_response.dto';
 
 /**
  * ***인증하지 않은(로그인 하지않은) 회원도 요청할수 있는 핸들러***
@@ -30,9 +31,10 @@ export class BoardController {
     getAllBoards(
         @Query('limit', ParseIntPipe) limit: number,
         @Query('offset', ParseIntPipe) offset: number
-    ) : Promise<Board[]>{
+    ) : Promise<BoardResponseDto[]>{
         this.logger.debug(`limit : ${limit}`)
         this.logger.debug(`offset : ${offset}`)
+
         return this.boardService.getAllBoards(limit, offset);
     }
 
@@ -40,17 +42,18 @@ export class BoardController {
     @UsePipes(ValidationPipe)
     @UseGuards(AuthGuard()) //인증된 멤버만 create 요청가능
     createBoard(
-        @Body() boardDto: BoardDto,
+        @Body() boardDto: BoardRequestDto,
         @Req() req
-        ): Promise<Board>{
+        ): Promise<BoardResponseDto>{
         return this.boardService.createBoard(boardDto, req.user);
     }
 
     @Get('/:id')
     getBoardById(
         @Param('id') id: number
-    ) : Promise<Board>{
+    ) : Promise<BoardResponseDto>{
         this.logger.log('getBoardById')
+
         return this.boardService.getBoardById(id);
     }
 
@@ -68,9 +71,9 @@ export class BoardController {
     @UseGuards(AuthGuard()) //인증된 멤버만 update 요청가능 - 인가는 service로직에 있음
     updateBoard(
         @Param('id') id : number,
-        @Body() boardDto: BoardDto,
+        @Body() boardDto: BoardRequestDto,
         @Req() req
-    ) : Promise<Board>{
+    ) : Promise<BoardResponseDto>{
         return this.boardService.updateBoard(id, req.user, boardDto)
     }
 }

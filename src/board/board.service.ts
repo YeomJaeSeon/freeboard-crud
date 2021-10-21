@@ -4,7 +4,8 @@ import { Member } from 'src/member/member.entity';
 import { BOARD_DELETE_SUCCESS_MSG, NOT_FOUND_BOARD_MSG, UNAUTHORIZE_ACCESS_RESOURCE_MSG } from '../message/message';
 import { Repository } from 'typeorm';
 import { Board } from './board.entity';
-import { BoardDto } from './dto/board.dto';
+import { BoardRequestDto } from './dto/board_request.dto';
+import { BoardResponseDto } from './dto/board_response.dto';
 
 @Injectable()
 export class BoardService {
@@ -17,18 +18,19 @@ export class BoardService {
     ){}
 
     //== getBoardById == //
-    async getBoardById(id: number): Promise<Board>{
-        const foundBoard = await this.boardRepository.findOne(id);
+    async getBoardById(id: number): Promise<BoardResponseDto>{
+        const foundBoard = await this.getOne(id);
 
-        if(!foundBoard){
-            throw new NotFoundException(NOT_FOUND_BOARD_MSG)
-        }
-        
-        return foundBoard;
+        //entity -> response
+        const boardResponseDto :BoardResponseDto = this.entityToDto(foundBoard);
+
+        this.entityToDto(foundBoard);
+
+        return boardResponseDto;
     }
 
     // == getAllBoards == //
-    async getAllBoards(limit: number, offset: number): Promise<Board[]>{
+    async getAllBoards(limit: number, offset: number): Promise<BoardResponseDto[]>{
         this.logger.debug(`limit : ${limit}`)
         this.logger.debug(`offset : ${offset}`)
 
@@ -37,14 +39,18 @@ export class BoardService {
             take: limit
         });
 
-        return foundBoards;
+        // entitiy -> dto
+        const boardResponseDtos: BoardResponseDto[] =
+        foundBoards.map(each => this.entityToDto(each))
+
+        return boardResponseDtos;
     }
 
     //== Create == //
     async createBoard(
-        boardDto: BoardDto,
+        boardDto: BoardRequestDto,
         member: Member
-        ) : Promise<Board>{
+        ) : Promise<BoardResponseDto>{
         const {title, content} = boardDto;
 
         //board 생성 (member가 만든)
@@ -57,8 +63,11 @@ export class BoardService {
 
         await this.boardRepository.save(createdBoard);
 
+        // entity -> dto
+        const boardResponseDto :BoardResponseDto = this.entityToDto(createdBoard);
+
         //생성된 게시판 리턴
-        return createdBoard;
+        return boardResponseDto;
     }
 
     //== delete == //
@@ -67,7 +76,7 @@ export class BoardService {
         member: Member
     ) : Promise<string>{
         //조회하고
-        const foundBoard = await this.getBoardById(id);
+        const foundBoard = await this.getOne(id);
 
         //check validate(자원에 접근하는 유저가 권한이 있는지)
         this.checkValidate(foundBoard, member);
@@ -81,9 +90,9 @@ export class BoardService {
     async updateBoard(
         boardId: number,
         member: Member,
-        boardDto : BoardDto
-    ) : Promise<Board>{
-        const foundBoard = await this.getBoardById(boardId);
+        boardDto : BoardRequestDto
+    ) : Promise<BoardResponseDto>{
+        const foundBoard = await this.getOne(boardId);
 
         //check validate(자원에 접근하는 유저가 권한이 있는지)
         this.checkValidate(foundBoard, member);
@@ -97,12 +106,43 @@ export class BoardService {
 
         await this.boardRepository.save(foundBoard);
 
-        return foundBoard;
+        // entity -> dto
+        const boardResponseDto :BoardResponseDto = this.entityToDto(foundBoard);
+
+        return boardResponseDto;
     }
 
+    // ==  private methods == //
+
+    // == check 인가 ==//
     private checkValidate(board : Board, member: Member) : void{
         if(board.member.id !== member.id){
             throw new UnauthorizedException(UNAUTHORIZE_ACCESS_RESOURCE_MSG);
         }
+    }
+
+    //== getOne - find()후, exception처리 메서드 ==//
+    private async getOne(id: number): Promise<Board>{
+        const foundBoard = await this.boardRepository.findOne(id);
+        
+        if(!foundBoard){
+            throw new NotFoundException(NOT_FOUND_BOARD_MSG)
+        }
+        
+        return foundBoard;
+    }
+
+    //entitiy to Dto
+    private entityToDto(board: Board): BoardResponseDto{
+        const boardResponseDto :BoardResponseDto = new BoardResponseDto(
+            board.id,
+            board.title,
+            board.content,
+            board.createdTime,
+            board.updatedTime,
+            board.member
+        )
+
+        return boardResponseDto;
     }
 }
