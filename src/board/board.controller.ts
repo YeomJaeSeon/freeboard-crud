@@ -4,6 +4,7 @@ import { Board } from './board.entity';
 import { BoardService } from './board.service';
 import { BoardRequestDto } from './dto/board_request.dto';
 import { BoardResponseDto } from './dto/board_response.dto';
+import { PaginationQueryDto } from './dto/pagination_query.dto';
 
 /**
  * ***인증하지 않은(로그인 하지않은) 회원도 요청할수 있는 핸들러***
@@ -28,14 +29,14 @@ export class BoardController {
 
     // == getAllBoards는 pagination이 필수임 - offset - 1 부터 limit개의 데이터 응답
     @Get()
+    @UsePipes(ValidationPipe)
     getAllBoards(
-        @Query('limit', ParseIntPipe) limit: number,
-        @Query('offset', ParseIntPipe) offset: number
+        @Query() query: PaginationQueryDto
     ) : Promise<BoardResponseDto[]>{
-        this.logger.debug(`limit : ${limit}`)
-        this.logger.debug(`offset : ${offset}`)
+        this.logger.debug(`limit : ${query.limit}`)
+        this.logger.debug(`offset : ${query.offset}`)
 
-        return this.boardService.getAllBoards(limit, offset);
+        return this.boardService.getAllBoards(query.limit, query.offset);
     }
 
     @Post()

@@ -19,3 +19,6 @@ export const SIGNUP_PASSWORD_DTO_MINLENGTH_REG_VALIDATION_MSG : string = '최소
 export const SIGNUP_PASSWROD_DTO_MAXLENGTH_VALIDATION_MSG: string = '최대 15글자 입니다.'
 export const SIGNUP_AGE_DTO_MIN_VALIDATION_MSG: string = '나이는 최소 1살입니다.'
 export const SIGNUP_AGE_DTO_MAX_VALIDATION_MSG: string = '나이는 최대 200살입니다.'
+
+export const PAGINATION_LIMIT_DTO_VALIDATION_MSG: string = 'limit쿼리 필수값입니다.';
+export const PAGINATION_OFFSET_DTO_VALIDATION_MSG: string = 'offset쿼리 필수값입니다.';
