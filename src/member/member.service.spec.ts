@@ -152,12 +152,9 @@ describe('MemberService', () => {
       );
 
       //then
-      try {
-        await service.signUp(duplicateMemberDto);
-      } catch (err) {
-        expect(err).toBeInstanceOf(ConflictException)
-        expect(err.message).toEqual(ALREADY_EXISTED_NAME_MSG)
-      }
+      await expect(service.signUp(duplicateMemberDto)).rejects.toThrow(
+        new ConflictException(ALREADY_EXISTED_NAME_MSG)
+      )
     });
     
   });
@@ -196,12 +193,9 @@ describe('MemberService', () => {
       );
       
       //then
-      try{
-        await service.login(notProperLoginMember);
-      }catch(err){
-        expect(err).toBeInstanceOf(UnauthorizedException);
-        expect(err.message).toEqual(UNAUTHORIZE_ACCESS_LOGIN_MSG);
-      }
+      await expect(service.login(notProperLoginMember)).rejects.toThrow(
+        new UnauthorizedException(UNAUTHORIZE_ACCESS_LOGIN_MSG)
+      )
     })
 
     it('로그인 실패 - 비밀번호 다름', async () => {
@@ -218,12 +212,9 @@ describe('MemberService', () => {
       );
 
       //then
-      try{
-        await service.login(notProperLoginMember);
-      }catch(err){
-        expect(err).toBeInstanceOf(UnauthorizedException);
-        expect(err.message).toEqual(UNAUTHORIZE_ACCESS_LOGIN_MSG);
-      }
+      await expect(service.login(notProperLoginMember)).rejects.toThrow(
+        new UnauthorizedException(UNAUTHORIZE_ACCESS_LOGIN_MSG)
+      )
     })
   })
 });

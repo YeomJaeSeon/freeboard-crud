@@ -107,16 +107,13 @@ describe('BoardService', () => {
       await service.createBoard(boardDto4, member);
       await service.createBoard(boardDto5, member);
 
+      //when - 없는 게시판 조회시
       const id: number = 999; 
 
-      try{
-        //when
-        await service.getBoardById(id);
-      }catch(err){
-        //then
-        expect(err).toBeInstanceOf(NotFoundException);
-        expect(err.message).toEqual(NOT_FOUND_BOARD_MSG)
-      }
+      //then
+      await expect(service.getBoardById(id)).rejects.toThrow(
+        new NotFoundException(NOT_FOUND_BOARD_MSG)
+      ) 
     })
   })
 
@@ -227,16 +224,13 @@ describe('BoardService', () => {
       await service.createBoard(boardDto2, member);
       await service.createBoard(boardDto3, member);
 
+      //when - 없는 게시판 삭제하려할 시
       const boardId:number = 100; //100 id의 게시글 삭제해보자
 
-      try{
-        //when
-        await service.deleteBoard(boardId, member);
-      }catch(err){
-        //then
-        expect(err).toBeInstanceOf(NotFoundException)
-        expect(err.message).toEqual(NOT_FOUND_BOARD_MSG)
-      }
+      //then
+      await expect(service.deleteBoard(boardId, member)).rejects.toThrow(
+        new UnauthorizedException(NOT_FOUND_BOARD_MSG)
+      ) 
     })
 
     it('게시글 삭제 - 권한이 없어서 삭제 거부', async () => {
@@ -255,17 +249,15 @@ describe('BoardService', () => {
 
       const boardId:number = 2; // 2 id의 게시글 삭제해보자
 
+      //when - 작성한 회원과 다른회원
       const anotherMemberId = 2;
       const anotherMember: Member = Member.createMember('2@naver.com', 21, MemberSex.FEMALE, '1234')
       anotherMember.id = anotherMemberId;
-      try{
-        //when
-        await service.deleteBoard(boardId, anotherMember) // 작성한 멤버가 아닌 다른 멤버가 삭제하려 시도할시
-      }catch(err){
-        //then
-        expect(err).toBeInstanceOf(UnauthorizedException)
-        expect(err.message).toEqual(UNAUTHORIZE_ACCESS_DELETE_MSG)
-      }
+
+      //then
+      await expect(service.deleteBoard(boardId, anotherMember)).rejects.toThrow(
+        new UnauthorizedException(UNAUTHORIZE_ACCESS_DELETE_MSG)
+      ) 
     })
   })
 });
