@@ -64,3 +64,4 @@ mockRepository의 메서드가 호출되어 db에 접근 이루어지지않게 �
     jwtService = module.get<JwtService>(JwtService);
   });
 ```
+- [ ] board entity를 바로 응답하기 보단 dto로 변환해서 응답하고싶다.. service로직에서 entity를 dto로 바꿀까, controller에서 바꿀까?
