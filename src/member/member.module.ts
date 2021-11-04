@@ -8,6 +8,7 @@ import { MemberController } from './member.controller';
 import { Member } from './member.entity';
 import { MemberService } from './member.service';
 
+//dd
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt'}), //passport 기본전략 : jwt를 사용할것.
