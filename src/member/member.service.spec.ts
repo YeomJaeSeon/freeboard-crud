@@ -54,7 +54,7 @@ class MockMemberRepository {
     member.id = this.id++;
     this.members.push(member);
   }
-} // == MockMemberRepository end ==//
+} // == MockMemberR epository end ==//
 
 describe('MemberService', () => {
   let service: MemberService;
